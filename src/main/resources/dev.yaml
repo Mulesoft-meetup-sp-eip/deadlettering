@@ -1,0 +1,34 @@
+amqp:
+  host: "***REMOVED***"
+  port: "5672"
+  virtualHost: "***REMOVED***"
+  username: "***REMOVED***"
+  password: "***REMOVED***"
+  heartbeatTimeout: "60"
+  publisher1:
+    exchange: new-person
+  listener1:
+    queue: backend1-person
+  listener2:
+    queue: backend2-person
+    
+amq:
+  url: "https://mq-us-east-1.anypoint.mulesoft.com/api/v1"
+  client_id: "***REMOVED***"
+  client_secret: "***REMOVED***"
+  publisher1:
+    exchange: new-person-backend1
+  publisher2:
+    exchange: new-person-backend2
+  listener1:
+    queue: backend1-person
+  listener2:
+    queue: backend2-person
+   
+http:
+  listener:
+    basepath: "/g-delivery"
+    port: "8081"
+    
+api:
+  id: "***REMOVED***"
