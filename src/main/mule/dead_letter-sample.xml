@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <apikit:config name="dead_letter-sample-config" api="resource::44285fea-d398-4b00-9384-02ff82bc90bf:dead_letter-sample:0.0.1:raml:zip:dead_letter-sample.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="dead_letter-sample-main">
@@ -122,21 +122,23 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\person:application\json:dead_letter-sample-config">
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
+		<ee:transform doc:name="Set var person Java Object" doc:id="a9d9b81f-f9af-4247-a7b4-de53554d4987" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="person" ><![CDATA[%dw 2.0
+output application/java
 ---
-{
-  uid: "9FaCD076-aca2-Ac99-5A7AceC80bD8",
-  "http-method": "POST",
-  resource: "/orders",
-  key: 582,
-  status: "Queued",
-  details: "Inserted on the queue",
-  "created-at": "2021-01-21T03:30:35.961Z"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name='Choice "mb" Message Broker' doc:id="fc4f8df6-390c-4690-beeb-26f987fef9a8" >
+			<when expression='#[attributes.queryParams."mb" == "AMQ"]'>
+				<flow-ref doc:name="publisher_amq-Sub_flow" doc:id="a90aa436-1e5f-47fa-aeef-7e9c7109dced" name="publisher_amq-Sub_flow"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="publisher_rmq-Sub_flow" doc:id="3b20c5f3-6090-4cbe-a570-b8d6ea5ddc91" name="publisher_rmq-Sub_flow" />
+			</otherwise>
+		</choice>
     </flow>
 </mule>

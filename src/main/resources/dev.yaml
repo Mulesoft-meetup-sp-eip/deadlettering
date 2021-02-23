@@ -6,28 +6,26 @@ amqp:
   password: "***REMOVED***"
   heartbeatTimeout: "60"
   publisher1:
-    exchange: new-person
+    exchange: eip-dead_lettering
   listener1:
-    queue: backend1-person
-  listener2:
-    queue: backend2-person
+    queue: backend4-person-main
+    max_redelivery_count: "5"
+    prefetch:
+      size: "1"
+      count: "1"
     
 amq:
   url: "https://mq-us-east-1.anypoint.mulesoft.com/api/v1"
   client_id: "***REMOVED***"
   client_secret: "***REMOVED***"
   publisher1:
-    exchange: new-person-backend1
-  publisher2:
-    exchange: new-person-backend2
+    exchange: eip-deadlettering
   listener1:
-    queue: backend1-person
-  listener2:
-    queue: backend2-person
+    queue: backend4-person-main
    
 http:
   listener:
-    basepath: "/g-delivery"
+    basepath: "/dead-lettering"
     port: "8081"
     
 api:
